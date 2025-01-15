@@ -15,7 +15,7 @@ def run_device():
 
     # наш json зашил внутрь питона
     data = {
-       "id": id,
+       "id_device": id,
        "lon": lon,
        "lat": lat,
        "rule": rule
@@ -23,29 +23,24 @@ def run_device():
 
     # Наш сервер к которому коннтектимся
     s = socket.socket()
-    HOST = "localhost"
+    HOST = "192.168.56.102"
     PORT = 8080
     s.connect((HOST, PORT))
-
     data_serv = s.recv(1024)  # Получаем приветствие.
     print(f"Server Mess : \n\t{data_serv.decode('utf-8')}")
-
     new_ran = 0 # рандом для долготы и широты раз в 1000 чуть увеличиваем
-    while True :
-    
+    while True :    
         json_data = json.dumps(data)
         # print(json_data) # вывод сообщения которое отправляем
         s.sendall(json_data.encode())
-
         # Подменяем статус
         if random.randint(0, 100) > 75 :
             rule = 3 # Если больше 90 помечаем 0 не корректным
         else :
             rule = 5 # Если не больше то  1 типа валидное
         data['rule'] = rule
-
         # Редактирование GPS
-        new_ran += 0 
+        new_ran += 1
         if new_ran == 1000 :
             new_ran = 0
             lon += 0.00001
@@ -61,5 +56,3 @@ if __name__ == '__main__':
     for i in range(100):
         id += 1
         threading.Thread(target = run_device).start()
-    
-    
